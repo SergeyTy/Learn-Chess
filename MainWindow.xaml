@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <Button x:Name="gen_field" Content="Gen" HorizontalAlignment="Left" Margin="418,45,0,0" VerticalAlignment="Top" Width="75" Click="gen_field_Click"/>
+        <UniformGrid x:Name="grid" Height="320" Width="320" RenderTransformOrigin="0.488,0.527" Margin="33,45,440.333,55.667" VerticalAlignment="Center" HorizontalAlignment="Center"/>
     </Grid>
 </Window>
