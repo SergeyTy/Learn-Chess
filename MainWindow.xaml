@@ -5,9 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Learn_Chess"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="540" MinWidth="540" MinHeight="450">
     <Grid>
         <Button x:Name="gen_field" Content="Gen" HorizontalAlignment="Left" Margin="418,45,0,0" VerticalAlignment="Top" Width="75" Click="gen_field_Click"/>
-        <UniformGrid x:Name="grid" Height="320" Width="320" RenderTransformOrigin="0.488,0.527" Margin="33,45,440.333,55.667" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <UniformGrid x:Name="grid" Height="320" Width="320" Margin="10,45,183.333,55.667" VerticalAlignment="Center" />
+        <UniformGrid x:Name="placement" Height="320" Width="320" Margin="10,45,183.333,55.667" VerticalAlignment="Center" />
+        <Button x:Name="checkers_placement" Content="Сheckers" HorizontalAlignment="Left" Margin="418,71,0,0" VerticalAlignment="Top" Width="75" Click="checkers_placement_Click"/>
+        <Button x:Name="chess_placement" Content="Сhess" HorizontalAlignment="Left" Margin="418,97,0,0" VerticalAlignment="Top" Width="75" Click="chess_placement_Click"/>
     </Grid>
 </Window>
