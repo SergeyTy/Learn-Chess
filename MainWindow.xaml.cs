@@ -33,16 +33,66 @@ namespace Learn_Chess
         BitmapImage W_queen = new BitmapImage(new Uri(@"pack://application:,,,/Images/Б_Ферзь.png", UriKind.Absolute));
         BitmapImage B_queen = new BitmapImage(new Uri(@"pack://application:,,,/Images/Ч_Ферзь.png", UriKind.Absolute));
 
+        int[,] mas_placementment = new int[8, 8];
+        Button[,] pieces_btn;
+        int new_i = -1;
+        int old_i = -1;
+        int new_j = -1;
+        int old_j = -1;
         public MainWindow()
         {
             InitializeComponent();
         }
 
+        int[,] placementmen_chess()
+        {
+            mas_placementment = new int[8, 8];
+            mas_placementment[0, 0] = mas_placementment[0, 7] = -5;//b_castel
+            mas_placementment[0, 1] = mas_placementment[0, 6] = -2;//b_knight
+            mas_placementment[0, 2] = mas_placementment[0, 5] = -3;//b_bishop
+            mas_placementment[0, 3] = -9;//b_queen
+            mas_placementment[0, 4] = -4;//b_king
+            mas_placementment[7, 0] = mas_placementment[7, 7] = 5;//w_castel
+            mas_placementment[7, 1] = mas_placementment[7, 6] = 2;//w_knight
+            mas_placementment[7, 2] = mas_placementment[7, 5] = 3;//w_bishop
+            mas_placementment[7, 3] = 9;//w_queen
+            mas_placementment[7, 4] = 4;//w_king
+            for (int i = 0; i <= 7; i++)
+            {
+                mas_placementment[1, i] = -1;//b_pawn
+            }
+            for (int i = 0; i <= 7; i++)
+            {
+                mas_placementment[6, i] = 1;//w_pawn
+            }
 
+            return mas_placementment;
+        }
+        int[,] placementmen_checkers()
+        {
+            mas_placementment = new int[8, 8];
+            for (int i = 1; i <= 7; i += 2)
+            {
+                mas_placementment[0, i] = -1;//b_pawn
+                mas_placementment[2, i] = -1;//b_pawn
+                mas_placementment[4, i] = 2;//open
+                mas_placementment[6, i] = 1;//w_pawn
+            }
+            for (int i = 0; i < 7; i += 2)
+            {
+                mas_placementment[1, i] = -1;//b_pawn
+                mas_placementment[3, i] = 2;//open
+                mas_placementment[5, i] = 1;//w_pawn
+                mas_placementment[7, i] = 1;//w_pawn
+            }
+
+
+            return mas_placementment;
+        }
 
         private void gen_field_Click(object sender, RoutedEventArgs e)
         {
-            //grid.Children.Clear();
+            grid.Children.Clear();
 
             grid.Width = 8 * (40);
             grid.Height = 8 * (40);
@@ -82,113 +132,191 @@ namespace Learn_Chess
 
         private void checkers_placement_Click(object sender, RoutedEventArgs e)
         {
+            int[,] mas_placementment = placementmen_checkers();
+            draw_position_checkers(mas_placementment);
+        }
 
+        private void draw_position_checkers(int[,] mas_placementment)
+        {
             placement.Children.Clear();
-
-            for (int i = 1; i <= 64; i++)
+            pieces_btn = new Button[8, 8];
+            for (int i = 0; i < 64; i++)
             {
+                pieces_btn[i / 8, i % 8] = new Button();
+
                 Image Pawn = new Image();
-                if (i <= 8)
+                if (mas_placementment[i / 8, i % 8] == -1)
                 {
-                    if (i % 2 == 0)
-                    {
-                        Pawn.Source = B_pawn;
-                    }
+                    Pawn.Source = B_pawn;
+
+                    pieces_btn[i / 8, i % 8].Tag = i;
+                    pieces_btn[i / 8, i % 8].Background = System.Windows.Media.Brushes.DarkGray;
+                    pieces_btn[i / 8, i % 8].Content = Pawn;
+                    pieces_btn[i / 8, i % 8].Click += checkers_Click;
                 }
-                else if ((8 < i) && (i <= 16))
+                else if (mas_placementment[i / 8, i % 8] == 1)
                 {
-                    if (i % 2 != 0)
-                    {
-                        Pawn.Source = B_pawn;
-                    }
+                    Pawn.Source = W_pawn;
+
+                    pieces_btn[i / 8, i % 8].Tag = i;
+                    pieces_btn[i / 8, i % 8].Background = System.Windows.Media.Brushes.DarkGray;
+                    pieces_btn[i / 8, i % 8].Content = Pawn;
+                    pieces_btn[i / 8, i % 8].Click += checkers_Click;
                 }
-                else if ((16 < i) && (i <= 24))
+                else if (mas_placementment[i / 8, i % 8] == 2)
                 {
-                    if (i % 2 == 0)
-                    {
-                        Pawn.Source = B_pawn;
-                    }
+                    pieces_btn[i / 8, i % 8].Tag = i;
+                    pieces_btn[i / 8, i % 8].Content = "";
+                    pieces_btn[i / 8, i % 8].Background = System.Windows.Media.Brushes.DarkGray;
+                    pieces_btn[i / 8, i % 8].Click += checkers_Click;
                 }
-                else if ((40 < i) && (i <= 48))
+                else
                 {
-                    if (i % 2 != 0)
-                    {
-                        Pawn.Source = W_pawn;
-                    }
+                    pieces_btn[i / 8, i % 8].Tag = i;
+                    pieces_btn[i / 8, i % 8].Content = "";
+                    pieces_btn[i / 8, i % 8].Background = System.Windows.Media.Brushes.Beige;
+                    pieces_btn[i / 8, i % 8].IsEnabled = false;
                 }
-                else if ((48 < i) && (i <= 56))
-                {
-                    if (i % 2 == 0)
-                    {
-                        Pawn.Source = W_pawn;
-                    }
-                }
-                else if ((56 < i) && (i <= 64))
-                {
-                    if (i % 2 != 0)
-                    {
-                        Pawn.Source = W_pawn;
-                    }
-                }
-                placement.Children.Add(Pawn);
+                placement.Children.Add(pieces_btn[i / 8, i % 8]);
             }
+        }
+
+        private void checkers_Click(object sender, RoutedEventArgs e)
+        {
+            int i = (int)((Button)sender).Tag / 8;
+            int j = (int)((Button)sender).Tag % 8;
+
+
+            if (old_j == -1)
+            {
+                old_i = (int)((Button)sender).Tag / 8;
+                old_j = (int)((Button)sender).Tag % 8;
+                return;
+            }
+            else if ((mas_placementment[i, j] == 2)|(mas_placementment[old_i,old_j]!=mas_placementment[(int)((Button)sender).Tag / 8, (int)((Button)sender).Tag % 8]))
+            {
+                new_i = (int)((Button)sender).Tag / 8;
+                new_j = (int)((Button)sender).Tag % 8;
+            }
+
+            if (new_i > -1)
+            {
+                mas_placementment[new_i, new_j] = mas_placementment[old_i, old_j];
+                mas_placementment[old_i, old_j] = 2;
+                draw_position_checkers(mas_placementment);
+                new_i = -1;
+                old_i = -1;
+                new_j = -1;
+                old_j = -1;
+            }
+
         }
 
         private void chess_placement_Click(object sender, RoutedEventArgs e)
         {
             placement.Children.Clear();
-            for (int i = 1; i <= 64; i++)
+            int[,] mas = placementmen_chess();
+            for (int i = 0; i < 64; i++)
             {
                 Image Pieces = new Image();
 
-                if ((i == 1) | (i == 8))
-                {
-                    Pieces.Source = B_castle;
-                }
-                else if ((i == 2) | (i == 7))
-                {
-                    Pieces.Source = B_knight;
-                }
-                else if ((i == 3) | (i == 6))
-                {
-                    Pieces.Source = B_bishop;
-                }
-                else if (i == 4)
-                {
-                    Pieces.Source = B_queen;
-                }
-                else if (i == 5)
-                {
-                    Pieces.Source = B_king;
-                }
-                else if ((8 < i) & (i <= 16))
+                if (mas[i / 8, i % 8] == -1)
                 {
                     Pieces.Source = B_pawn;
                 }
-                else if ((i == 57) | (i == 64))
+                else if (mas[i / 8, i % 8] == 1)
                 {
-                    Pieces.Source = W_castle;
-                }                   
-                else if ((i == 58) |(i == 63))
-                {                   
-                    Pieces.Source = W_knight;
-                }                   
-                else if ((i == 59) |(i == 62))
-                {                   
-                    Pieces.Source = W_bishop;
-                }                   
-                else if (i == 60)   
-                {                   
-                    Pieces.Source = W_queen;
-                }                   
-                else if (i == 61)   
-                {                   
-                    Pieces.Source = W_king;
-                }                   
-                else if ((48 < i) & (i <= 56))
-                {                   
                     Pieces.Source = W_pawn;
                 }
+                else if (mas[i / 8, i % 8] == -2)
+                {
+                    Pieces.Source = B_knight;
+                }
+                else if (mas[i / 8, i % 8] == 2)
+                {
+                    Pieces.Source = W_knight;
+                }
+                else if (mas[i / 8, i % 8] == 3)
+                {
+                    Pieces.Source = W_bishop;
+                }
+                else if (mas[i / 8, i % 8] == -3)
+                {
+                    Pieces.Source = B_bishop;
+                }
+                else if (mas[i / 8, i % 8] == -5)
+                {
+                    Pieces.Source = B_castle;
+                }
+                else if (mas[i / 8, i % 8] == 5)
+                {
+                    Pieces.Source = W_castle;
+                }
+                else if (mas[i / 8, i % 8] == 4)
+                {
+                    Pieces.Source = W_king;
+                }
+                else if (mas[i / 8, i % 8] == -4)
+                {
+                    Pieces.Source = B_king;
+                }
+                else if (mas[i / 8, i % 8] == -9)
+                {
+                    Pieces.Source = B_queen;
+                }
+                else if (mas[i / 8, i % 8] == 9)
+                {
+                    Pieces.Source = W_queen;
+                }
+
+                //if ((i == 1) | (i == 8))
+                //{
+                //    Pieces.Source = B_castle;
+                //}
+                //else if ((i == 2) | (i == 7))
+                //{
+                //    Pieces.Source = B_knight;
+                //}
+                //else if ((i == 3) | (i == 6))
+                //{
+                //    Pieces.Source = B_bishop;
+                //}
+                //else if (i == 4)
+                //{
+                //    Pieces.Source = B_queen;
+                //}
+                //else if (i == 5)
+                //{
+                //    Pieces.Source = B_king;
+                //}
+                //else if ((8 < i) & (i <= 16))
+                //{
+                //    Pieces.Source = B_pawn;
+                //}
+                //else if ((i == 57) | (i == 64))
+                //{
+                //    Pieces.Source = W_castle;
+                //}
+                //else if ((i == 58) | (i == 63))
+                //{
+                //    Pieces.Source = W_knight;
+                //}
+                //else if ((i == 59) | (i == 62))
+                //{
+                //    Pieces.Source = W_bishop;
+                //}
+                //else if (i == 60)
+                //{
+                //    Pieces.Source = W_queen;
+                //}
+                //else if (i == 61)
+                //{
+                //    Pieces.Source = W_king;
+                //}
+                //else if ((48 < i) & (i <= 56))
+                //{
+                //    Pieces.Source = W_pawn;
+                //}
                 placement.Children.Add(Pieces);
             }
         }
