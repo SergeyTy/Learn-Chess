@@ -35,6 +35,7 @@ namespace Learn_Chess
 
         int[,] mas_placementment = new int[8, 8];
         Button[,] pieces_btn;
+        Button[,] chess_btn;
         int new_i = -1;
         int old_i = -1;
         int new_j = -1;
@@ -89,6 +90,30 @@ namespace Learn_Chess
 
             return mas_placementment;
         }
+        string[,] field()
+        {
+            string[,] field = new string[8, 8];
+            for (int row = 1; row <= 8; row++)
+            {
+                if (row % 2 == 0)
+                {
+                    for (int column = 1; column <= 8; column++)
+                    {
+                        if ((column % 2) == 0) field[row-1, column-1] = "w";
+                        if ((column % 2) != 0) field[row-1, column-1] = "b";
+                    }
+                }
+                if (row % 2 != 0)
+                {
+                    for (int column = 1; column <= 8; column++)
+                    {
+                        if ((column % 2) == 0) field[row-1, column-1] = "b";
+                        if ((column % 2 != 0)) field[row-1, column-1] = "w";
+                    }
+                }
+            }
+            return field;
+        }
 
         private void gen_field_Click(object sender, RoutedEventArgs e)
         {
@@ -97,35 +122,18 @@ namespace Learn_Chess
             grid.Width = 8 * (40);
             grid.Height = 8 * (40);
 
-            for (int row = 1; row <= 8; row++)
+            for (int i = 0; i < 8; i++)
             {
-                if (row % 2 == 0)
+                for (int j = 0; j < 8; j++)
                 {
-                    for (int column = 1; column <= 8; column++)
-                    {
-                        Rectangle rec = new Rectangle();
-                        rec.Width = 40;
-                        rec.Height = 40;
-                        rec.HorizontalAlignment = HorizontalAlignment.Center;
-                        rec.VerticalAlignment = VerticalAlignment.Center;
-                        if ((column % 2) == 0) rec.Fill = System.Windows.Media.Brushes.Beige;
-                        if (column % 2 != 0) rec.Fill = System.Windows.Media.Brushes.DarkGray;
-                        grid.Children.Add(rec);
-                    }
-                }
-                if (row % 2 != 0)
-                {
-                    for (int column = 1; column <= 8; column++)
-                    {
-                        Rectangle rec = new Rectangle();
-                        rec.Width = 40;
-                        rec.Height = 40;
-                        rec.HorizontalAlignment = HorizontalAlignment.Center;
-                        rec.VerticalAlignment = VerticalAlignment.Center;
-                        if ((column % 2) == 0) rec.Fill = System.Windows.Media.Brushes.DarkGray;
-                        if (column % 2 != 0) rec.Fill = System.Windows.Media.Brushes.Beige;
-                        grid.Children.Add(rec);
-                    }
+                    Rectangle rec = new Rectangle();
+                    rec.Width = 40;
+                    rec.Height = 40;
+                    rec.HorizontalAlignment = HorizontalAlignment.Center;
+                    rec.VerticalAlignment = VerticalAlignment.Center;
+                    if (field()[i, j] == "b") rec.Fill = System.Windows.Media.Brushes.Beige;
+                    if (field()[i, j] == "w") rec.Fill = System.Windows.Media.Brushes.DarkGray;
+                    grid.Children.Add(rec);
                 }
             }
         }
@@ -193,7 +201,7 @@ namespace Learn_Chess
                 old_j = (int)((Button)sender).Tag % 8;
                 return;
             }
-            else if ((mas_placementment[i, j] == 2)|(mas_placementment[old_i,old_j]!=mas_placementment[(int)((Button)sender).Tag / 8, (int)((Button)sender).Tag % 8]))
+            else if ((mas_placementment[i, j] == 2) | (mas_placementment[old_i, old_j] != mas_placementment[(int)((Button)sender).Tag / 8, (int)((Button)sender).Tag % 8]))
             {
                 new_i = (int)((Button)sender).Tag / 8;
                 new_j = (int)((Button)sender).Tag % 8;
@@ -214,111 +222,219 @@ namespace Learn_Chess
 
         private void chess_placement_Click(object sender, RoutedEventArgs e)
         {
-            placement.Children.Clear();
             int[,] mas = placementmen_chess();
+            draw_position_chess(mas_placementment);
+        }
+        private void draw_position_chess(int[,] mas_placementment)
+        {
+            placement.Children.Clear();
+            chess_btn = new Button[8, 8];
             for (int i = 0; i < 64; i++)
             {
                 Image Pieces = new Image();
+                chess_btn[i / 8, i % 8] = new Button();
+                if (field()[i / 8, i % 8] == "b")
+                {
+                    chess_btn[i / 8, i % 8].Background = Brushes.DarkGray;
+                }
+                else if (field()[i / 8, i % 8] == "w")
+                {
+                    chess_btn[i / 8, i % 8].Background = Brushes.Beige;
+                }
 
-                if (mas[i / 8, i % 8] == -1)
+                if (mas_placementment[i / 8, i % 8] == -1)
                 {
                     Pieces.Source = B_pawn;
+
+                    chess_btn[i / 8, i % 8].Tag = i;
+                    chess_btn[i / 8, i % 8].Content = Pieces;
+                    chess_btn[i / 8, i % 8].Click += bPawnMove;
                 }
-                else if (mas[i / 8, i % 8] == 1)
+                else if (mas_placementment[i / 8, i % 8] == 1)
                 {
                     Pieces.Source = W_pawn;
+
+                    chess_btn[i / 8, i % 8].Tag = i;
+                    chess_btn[i / 8, i % 8].Content = Pieces;
+                    chess_btn[i / 8, i % 8].Click += wPawnMove;
                 }
-                else if (mas[i / 8, i % 8] == -2)
+                else if (mas_placementment[i / 8, i % 8] == -2)
                 {
                     Pieces.Source = B_knight;
+
+                    chess_btn[i / 8, i % 8].Tag = i;
+                    chess_btn[i / 8, i % 8].Content = Pieces;
+                    chess_btn[i / 8, i % 8].Click += bKnightMove;
                 }
-                else if (mas[i / 8, i % 8] == 2)
+                else if (mas_placementment[i / 8, i % 8] == 2)
                 {
                     Pieces.Source = W_knight;
+                    chess_btn[i / 8, i % 8].Tag = i;
+                    chess_btn[i / 8, i % 8].Content = Pieces;
+                    chess_btn[i / 8, i % 8].Click += wKnightMove;
                 }
-                else if (mas[i / 8, i % 8] == 3)
+                else if (mas_placementment[i / 8, i % 8] == 3)
                 {
                     Pieces.Source = W_bishop;
+
+                    chess_btn[i / 8, i % 8].Tag = i;
+                    chess_btn[i / 8, i % 8].Content = Pieces;
+                    chess_btn[i / 8, i % 8].Click += wBishopMove;
                 }
-                else if (mas[i / 8, i % 8] == -3)
+                else if (mas_placementment[i / 8, i % 8] == -3)
                 {
                     Pieces.Source = B_bishop;
+
+                    chess_btn[i / 8, i % 8].Tag = i;
+                    chess_btn[i / 8, i % 8].Content = Pieces;
+                    chess_btn[i / 8, i % 8].Click += bBishopMove;
                 }
-                else if (mas[i / 8, i % 8] == -5)
+                else if (mas_placementment[i / 8, i % 8] == -5)
                 {
                     Pieces.Source = B_castle;
+
+                    chess_btn[i / 8, i % 8].Tag = i;
+                    chess_btn[i / 8, i % 8].Content = Pieces;
+                    chess_btn[i / 8, i % 8].Click += wCastleMove;
                 }
-                else if (mas[i / 8, i % 8] == 5)
+                else if (mas_placementment[i / 8, i % 8] == 5)
                 {
                     Pieces.Source = W_castle;
+
+                    chess_btn[i / 8, i % 8].Tag = i;
+                    chess_btn[i / 8, i % 8].Content = Pieces;
+                    chess_btn[i / 8, i % 8].Click += bCastleMove;
                 }
-                else if (mas[i / 8, i % 8] == 4)
+                else if (mas_placementment[i / 8, i % 8] == 4)
                 {
                     Pieces.Source = W_king;
+
+                    chess_btn[i / 8, i % 8].Tag = i;
+                    chess_btn[i / 8, i % 8].Content = Pieces;
+                    chess_btn[i / 8, i % 8].Click += wKingMove;
                 }
-                else if (mas[i / 8, i % 8] == -4)
+                else if (mas_placementment[i / 8, i % 8] == -4)
                 {
                     Pieces.Source = B_king;
+
+                    chess_btn[i / 8, i % 8].Tag = i;
+                    chess_btn[i / 8, i % 8].Content = Pieces;
+                    chess_btn[i / 8, i % 8].Click += bKingMove;
                 }
-                else if (mas[i / 8, i % 8] == -9)
+                else if (mas_placementment[i / 8, i % 8] == -9)
                 {
                     Pieces.Source = B_queen;
+
+                    chess_btn[i / 8, i % 8].Tag = i;
+                    chess_btn[i / 8, i % 8].Content = Pieces;
+                    chess_btn[i / 8, i % 8].Click += bQueenMove;
                 }
-                else if (mas[i / 8, i % 8] == 9)
+                else if (mas_placementment[i / 8, i % 8] == 9)
                 {
                     Pieces.Source = W_queen;
-                }
 
-                //if ((i == 1) | (i == 8))
-                //{
-                //    Pieces.Source = B_castle;
-                //}
-                //else if ((i == 2) | (i == 7))
-                //{
-                //    Pieces.Source = B_knight;
-                //}
-                //else if ((i == 3) | (i == 6))
-                //{
-                //    Pieces.Source = B_bishop;
-                //}
-                //else if (i == 4)
-                //{
-                //    Pieces.Source = B_queen;
-                //}
-                //else if (i == 5)
-                //{
-                //    Pieces.Source = B_king;
-                //}
-                //else if ((8 < i) & (i <= 16))
-                //{
-                //    Pieces.Source = B_pawn;
-                //}
-                //else if ((i == 57) | (i == 64))
-                //{
-                //    Pieces.Source = W_castle;
-                //}
-                //else if ((i == 58) | (i == 63))
-                //{
-                //    Pieces.Source = W_knight;
-                //}
-                //else if ((i == 59) | (i == 62))
-                //{
-                //    Pieces.Source = W_bishop;
-                //}
-                //else if (i == 60)
-                //{
-                //    Pieces.Source = W_queen;
-                //}
-                //else if (i == 61)
-                //{
-                //    Pieces.Source = W_king;
-                //}
-                //else if ((48 < i) & (i <= 56))
-                //{
-                //    Pieces.Source = W_pawn;
-                //}
-                placement.Children.Add(Pieces);
+                    chess_btn[i / 8, i % 8].Tag = i;
+                    chess_btn[i / 8, i % 8].Content = Pieces;
+                    chess_btn[i / 8, i % 8].Click += wQueenMove;
+                }
+                else if (mas_placementment[i / 8, i % 8] == 0)
+                {
+                    chess_btn[i / 8, i % 8].Tag = i;
+                    chess_btn[i / 8, i % 8].Content = "";
+                    chess_btn[i / 8, i % 8].Click += emptyClick;
+                }
+                placement.Children.Add(chess_btn[i / 8, i % 8]);
             }
         }
+
+        private void emptyClick(object sender, RoutedEventArgs e)
+        {
+            if (old_i != -1)
+            {
+                if ((new_i == -1) | (new_j == -1))
+                {
+                    new_i = (int)((Button)sender).Tag / 8;
+                    new_j = (int)((Button)sender).Tag % 8;
+                    mas_placementment[new_i, new_j] = mas_placementment[old_i, old_j];
+                    mas_placementment[old_i, old_j] = 0;
+                    draw_position_chess(mas_placementment);
+                    new_i = new_j = old_i = old_j = -1;
+                }
+            }
+
+        }
+
+        private void wQueenMove(object sender, RoutedEventArgs e)
+        {
+            old_i = (int)((Button)sender).Tag / 8;
+            old_j = (int)((Button)sender).Tag % 8;
+        }
+
+        private void bQueenMove(object sender, RoutedEventArgs e)
+        {
+            old_i = (int)((Button)sender).Tag / 8;
+            old_j = (int)((Button)sender).Tag % 8;
+        }
+
+        private void bKingMove(object sender, RoutedEventArgs e)
+        {
+            old_i = (int)((Button)sender).Tag / 8;
+            old_j = (int)((Button)sender).Tag % 8;
+        }
+
+        private void wKingMove(object sender, RoutedEventArgs e)
+        {
+            old_i = (int)((Button)sender).Tag / 8;
+            old_j = (int)((Button)sender).Tag % 8;
+        }
+
+        private void bCastleMove(object sender, RoutedEventArgs e)
+        {
+            old_i = (int)((Button)sender).Tag / 8;
+            old_j = (int)((Button)sender).Tag % 8;
+        }
+
+        private void wCastleMove(object sender, RoutedEventArgs e)
+        {
+            old_i = (int)((Button)sender).Tag / 8;
+            old_j = (int)((Button)sender).Tag % 8;
+        }
+
+        private void bBishopMove(object sender, RoutedEventArgs e)
+        {
+            old_i = (int)((Button)sender).Tag / 8;
+            old_j = (int)((Button)sender).Tag % 8;
+        }
+
+        private void wBishopMove(object sender, RoutedEventArgs e)
+        {
+            old_i = (int)((Button)sender).Tag / 8;
+            old_j = (int)((Button)sender).Tag % 8;
+        }
+
+        private void wKnightMove(object sender, RoutedEventArgs e)
+        {
+            old_i = (int)((Button)sender).Tag / 8;
+            old_j = (int)((Button)sender).Tag % 8;
+        }
+
+        private void bKnightMove(object sender, RoutedEventArgs e)
+        {
+            old_i = (int)((Button)sender).Tag / 8;
+            old_j = (int)((Button)sender).Tag % 8;
+        }
+
+        private void wPawnMove(object sender, RoutedEventArgs e)
+        {
+            old_i = (int)((Button)sender).Tag / 8;
+            old_j = (int)((Button)sender).Tag % 8;
+        }
+
+        private void bPawnMove(object sender, RoutedEventArgs e)
+        {
+            old_i = (int)((Button)sender).Tag / 8;
+            old_j = (int)((Button)sender).Tag % 8;
+        }
     }
+
 }
